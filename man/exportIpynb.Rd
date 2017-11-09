@@ -4,10 +4,14 @@
 \alias{exportIpynb}
 \title{Creates an ipynb list structure and writes to file}
 \usage{
-exportIpynb(notebook, file = NULL)
+exportIpynb(id, version, file = NULL)
 }
 \arguments{
-\item{notebook}{A list.}
+\item{id}{notebook id}
+
+\item{version}{notebook version}
+
+\item{file}{Optional file path to write to}
 }
 \value{
 A list
@@ -17,6 +21,6 @@ Creates an ipynb list structure and writes to file
 }
 \examples{
 notebook <- readRDS("data/notebooks/notebook01.rds")
-exportIpynb(notebook, file = "exportedBook.ipynb")
+exportIpynb(notebook, file = "~/exportedBook.ipynb")
 }
 

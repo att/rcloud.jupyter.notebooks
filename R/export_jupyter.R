@@ -1,14 +1,18 @@
 #' Creates an ipynb list structure and writes to file
 #'
-#' @param notebook A list.
+#' @param id notebook id
+#' @param version notebook version
+#' @param file Optional file path to write to
 #' @return A list
 #' @examples
 #' notebook <- readRDS("data/notebooks/notebook01.rds")
-#' exportIpynb(notebook, file = "exportedBook.ipynb")
+#' exportIpynb(notebook, file = "~/exportedBook.ipynb")
+#' @export
 
-exportIpynb <- function(notebook, file = NULL){
-  #To Do: use rcloud.support to read notebook
-  #notebook <- rcloud.support::rcloud.get.notebook(id, version)
+exportIpynb <- function(id ,version, file = NULL){
+
+   # Use rcloud.support to read notebook
+  notebook <- rcloud.support::rcloud.get.notebook(id, version)
 
   if (!notebook$ok) return(NULL)  # Check notebook
 
