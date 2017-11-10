@@ -17,7 +17,7 @@ caps <- NULL
   )
 
   ocaps <- list(
-    #importIpynb = make_oc(importIpynb),
+    importIpynb = make_oc(importIpynb),
     exportIpynb = make_oc(exportIpynb)
   )
 

@@ -4,9 +4,6 @@
 #' @param version notebook version
 #' @param file Optional file path to write to
 #' @return A list
-#' @examples
-#' notebook <- readRDS("data/notebooks/notebook01.rds")
-#' exportIpynb(notebook, file = "~/exportedBook.ipynb")
 #' @export
 
 exportIpynb <- function(id ,version, file = NULL){
@@ -39,7 +36,16 @@ exportIpynb <- function(id ,version, file = NULL){
   # Write list to file
   jsonlite::write_json(x = cell_To_IPYNB(cells), path = tmp, auto_unbox = TRUE)
 
-  # To Do: output returned to user
+  if (is.null(file)) {
+    list(
+      description = notebook$content$description,
+      jup = readChar(tmp, file.info(tmp)$size),
+      file = tmp
+    )
+  } else {
+    invisible()
+  }
+
 }
 
 #' Converts notebook cells to JSON cells

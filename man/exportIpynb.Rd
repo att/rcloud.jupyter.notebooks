@@ -19,8 +19,4 @@ A list
 \description{
 Creates an ipynb list structure and writes to file
 }
-\examples{
-notebook <- readRDS("data/notebooks/notebook01.rds")
-exportIpynb(notebook, file = "~/exportedBook.ipynb")
-}
 

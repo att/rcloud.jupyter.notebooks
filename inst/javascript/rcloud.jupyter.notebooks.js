@@ -52,7 +52,7 @@
 
                                 function do_import() {
                                     // Need to call back to R to import the notebook
-                                    oc.importRmd(rmd_raw, rmd_filename).then(
+                                    oc.importIpynb(rmd_raw, rmd_filename).then(
                                         function(notebook) {
                                             console.log(notebook);
                                             if (notebook) {
@@ -138,7 +138,7 @@
                         action: function() {
                             oc.exportIpynb(shell.gistname(), shell.version()).then(function(jup) {
                                 if (jup === null) { jup = ''; }
-                                download_as_file(jup.description + '.ipynb', jup.jup, 'text/plain');
+                                download_as_file(jup.description + '.ipynb', jup.jup, 'text/json');
                             });
                         }
                     }
