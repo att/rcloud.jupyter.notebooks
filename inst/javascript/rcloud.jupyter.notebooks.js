@@ -21,7 +21,7 @@
 
                     jupImport: {
                         sort: 11001,
-                        text: 'Import Jupyter Notebook',
+                        text: 'Import as Jupyter Notebook',
                         modes: ['edit'],
                         action: function() {
                             var that = this;
@@ -34,9 +34,11 @@
                                 var import_button = null;
 
                                 function do_upload(file) {
+
                                     rmd_status.hide();
                                     var fr = new FileReader();
                                     fr.onloadend = function(e) {
+
                                         rmd_status.show();
                                         rmd_status.html(
                                             '<pre>' + fr.result.split("\n")
@@ -51,8 +53,10 @@
                                 }
 
                                 function do_import() {
+
                                     // Need to call back to R to import the notebook
-                                    oc.importIpynb(rmd_raw, rmd_filename).then(
+                                    var jsonData = JSON.parse(rmd_raw);
+                                    oc.importIpynb(jsonData, rmd_filename).then(
                                         function(notebook) {
                                             console.log(notebook);
                                             if (notebook) {
@@ -133,10 +137,12 @@
 
                     jupExport: {
                         sort: 11002,
-                        text: 'Export Jupyter Notebook',
+                        text: 'Export as Jupyter Notebook',
                         modes: ['edit'],
                         action: function() {
+
                             oc.exportIpynb(shell.gistname(), shell.version()).then(function(jup) {
+
                                 if (jup === null) { jup = ''; }
                                 download_as_file(jup.description + '.ipynb', jup.jup, 'text/json');
                             });
