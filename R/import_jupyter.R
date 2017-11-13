@@ -5,7 +5,7 @@
 #' @return list
 #' @export
 ipyToJson <- function(json, filename){
-  s
+
   notebookName <- tools::file_path_sans_ext(basename(filename))
 
   notebook <- list(description = notebookName, files = list())

@@ -1,7 +1,7 @@
 # R ----------------
 kernelspec_R <- list(display_name = "R",
-                   language = "R",
-                   name = "ir")
+                     language = "R",
+                     name = "ir")
 
 language_info_R <- list(
   codemirror_mode = "r",
@@ -9,12 +9,12 @@ language_info_R <- list(
   mimetype = "text/x-r-source",
   name = "R",
   pygments_lexer = "r",
-  version = "3.3.3")   # R versioning - Rcloud dependant or user installed dep??
+  version = paste(version$major, version$minor, sep = "."))   # R versioning - Rcloud dependant or user installed dep??
 
 # Python ------------
 kernelspec_py <- list(display_name = "Python 3",
-                     language = "python",
-                     name = "python3")
+                      language = "python",
+                      name = "python3")
 
 language_info_py <- list(
   codemirror_mode = list(name = "ipython", version = 3),

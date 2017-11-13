@@ -8,7 +8,7 @@
 
 exportIpynb <- function(id ,version, file = NULL){
 
-   # Use rcloud.support to read notebook
+  # Use rcloud.support to read notebook
   notebook <- rcloud.support::rcloud.get.notebook(id, version)
 
   if (!notebook$ok) return(NULL)  # Check notebook
@@ -25,7 +25,7 @@ exportIpynb <- function(id ,version, file = NULL){
 
   cells <- cells[match(sort.int(cnums), cnums)]  # Order cells
 
- # Create a temp file if file not specifed
+  # Create a temp file if file not specifed
   tmp <- file
 
   if (is.null(tmp)) {
@@ -58,9 +58,14 @@ exportIpynb <- function(id ,version, file = NULL){
 
 cell_To_IPYNB <- function(cells){
 
-  # Check language of first cell
-  #Jupyter notebooks currently do not support multple languages
+  # Use language of first cell
+  # Jupyter notebooks currently do not support multple languages
+  # Create a warning if more than one language is used
   metaData <- cellLanguage(cells[[1]])
+  cellLanguages <- purrr::map(cells, cellLanguage, kernel = FALSE)
+
+  # if(length(unique(cellLanguages)) > 1) stop(
+  #   paste("Jupyter notebooks do not currently suport multiple languages, converting all cells to "), cellLanguages[[1]])
 
   # Create JSON Shell
   JSON <- list(cells = list(),
@@ -76,6 +81,12 @@ cell_To_IPYNB <- function(cells){
                             metadata = structure(list(), .Names = character(0)), # Named list
                             outputs = list(),                                    # Ignore output (TO DO: markdown)
                             source = list(cells[[i]]$content))                   # Pull content of each cell
+
+    # Markdown cells do not require an output or execution count
+    if(cellType(cells[[i]]) == "markdown"){
+      JSON$cells[[i]]$outputs <- NULL
+      JSON$cells[[i]]$execution_count <- NULL
+    }
   }
   return(JSON)
 
@@ -101,19 +112,29 @@ cellType <- function(cell){
 #' Checks the language of a cell. (First cell supplied)
 #'
 #' @param cell A single notebook cell
+#' @param kernel if FALSE just the language name is returned
 #' @return list containing either python or R kernel nad language info
 #' @examples
 #' notebook <- readRDS("data/notebooks/notebook01.rds")
 #' cellLanguage(notebook$content$files$part1.R)
-cellLanguage <- function(cell){
-  if (grepl("^part.*\\.R$", cell$filename)) {
+cellLanguage <- function(cell, kernel = TRUE){
+
+  lang <-  if (grepl("^part.*\\.R$", cell$filename)) {
+    "R"
+  } else if(grepl("^part.*\\.py$", cell$filename)){
+    "Python"
+  }
+
+  if(!kernel){
+    return(lang)
+  }
+
+  if(lang == "R"){
     return(list(language_info = language_info_R,
                 kernelspec = kernelspec_R))
-
-  } else if(grepl("^part.*\\.py$", cell$filename)){
+  }else {
     return(list(language_info = language_info_py,
                 kernelspec = kernelspec_py))
-
   }
 }
 
