@@ -34,7 +34,7 @@ exportIpynb <- function(id ,version, file = NULL){
   }
 
   # Write list to file
-  jsonlite::write_json(x = cell_To_IPYNB(cells), path = tmp, auto_unbox = TRUE)
+  jsonlite::write_json(x = cell_to_ipynb(cells), path = tmp, auto_unbox = TRUE)
 
   if (is.null(file)) {
     list(
@@ -54,9 +54,9 @@ exportIpynb <- function(id ,version, file = NULL){
 #' @return A list
 #' @examples
 #' notebook <- readRDS("data/notebooks/notebook01.rds")
-#' cell_To_IPYNB(notebook$content$files)
+#' cell_to_ipynb(notebook$content$files)
 
-cell_To_IPYNB <- function(cells){
+cell_to_ipynb <- function(cells){
 
   # Use language of first cell
   # Jupyter notebooks currently do not support multple languages
@@ -67,8 +67,8 @@ cell_To_IPYNB <- function(cells){
   # if(length(unique(cellLanguages)) > 1) stop(
   #   paste("Jupyter notebooks do not currently suport multiple languages, converting all cells to "), cellLanguages[[1]])
 
-  # Create JSON Shell
-  JSON <- list(cells = list(),
+  # Create json Shell
+  json <- list(cells = list(),
                metadata = list(kernelspec = metaData$kernelspec,
                                language_info = metaData$language_info),
                nbformat = 4L,
@@ -76,7 +76,7 @@ cell_To_IPYNB <- function(cells){
 
   for(i in seq_along(cells)){
 
-    JSON$cells[[i]] <- list(cell_type = cellType(cells[[i]]),
+    json$cells[[i]] <- list(cell_type = cellType(cells[[i]]),
                             execution_count = i,                                 # Cell number
                             metadata = structure(list(), .Names = character(0)), # Named list
                             outputs = list(),                                    # Ignore output (TO DO: markdown)
@@ -84,11 +84,11 @@ cell_To_IPYNB <- function(cells){
 
     # Markdown cells do not require an output or execution count
     if(cellType(cells[[i]]) == "markdown"){
-      JSON$cells[[i]]$outputs <- NULL
-      JSON$cells[[i]]$execution_count <- NULL
+      json$cells[[i]]$outputs <- NULL
+      json$cells[[i]]$execution_count <- NULL
     }
   }
-  return(JSON)
+  return(json)
 
 }
 

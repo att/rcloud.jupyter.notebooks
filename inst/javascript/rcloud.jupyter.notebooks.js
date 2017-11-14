@@ -21,7 +21,7 @@
 
                     jupImport: {
                         sort: 11001,
-                        text: 'Import as Jupyter Notebook',
+                        text: 'Import Jupyter Notebook',
                         modes: ['edit'],
                         action: function() {
                             var that = this;
@@ -74,7 +74,7 @@
                                 }
 
                                 var body = $('<div class="container"/>');
-                                var file_select = $('<input type="file" id="rmarkdown-file-upload" size="50"></input>');
+                                var file_select = $('<input type="file" id="jupyter-file-upload" size="50"></input>');
 
                                 file_select
                                     .click(function() {
@@ -102,16 +102,16 @@
                                     .append(cancel).append(import_button);
                                 var header = $(['<div class="modal-header">',
                                                 '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>',
-                                                '<h3>Import Rmarkdown File</h3>',
+                                                '<h3>Import Jupyter Notebook</h3>',
                                                 '</div>'].join(''));
-                                var dialog = $('<div id="import-rmarkdown-file-dialog" class="modal fade"></div>')
+                                var dialog = $('<div id="import-jupyter-file-dialog" class="modal fade"></div>')
                                     .append($('<div class="modal-dialog"></div>')
                                             .append($('<div class="modal-content"></div>')
                                                     .append(header).append(body).append(footer)));
                                 $("body").append(dialog);
                                 dialog
                                     .on('show.bs.modal', function() {
-                                        $("#rmarkdown-file-upload")[0].value = null;
+                                        $("#jupyter-file-upload")[0].value = null;
                                         rmd_status.text('');
                                         rmd_status.hide();
                                     });
@@ -124,7 +124,7 @@
                                 });
                                 return dialog;
                             }
-                            var dialog = $("#import-rmarkdown-file-dialog");
+                            var dialog = $("#import-jupyter-file-dialog");
                             if(!dialog.length)
                                 dialog = create_import_file_dialog();
                             else

@@ -9,7 +9,7 @@ language_info_R <- list(
   mimetype = "text/x-r-source",
   name = "R",
   pygments_lexer = "r",
-  version = paste(version$major, version$minor, sep = "."))   # R versioning - Rcloud dependant or user installed dep??
+  version = paste(version$major, version$minor, sep = "."))
 
 # Python ------------
 kernelspec_py <- list(display_name = "Python 3",
