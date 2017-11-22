@@ -4,6 +4,7 @@
 #' @param version notebook version
 #' @param file Optional file path to write to
 #' @return A list
+#' @importFrom jsonlite write_json
 #' @export
 
 exportIpynb <- function(id ,version, file = NULL){
@@ -52,6 +53,7 @@ exportIpynb <- function(id ,version, file = NULL){
 #'
 #' @param cells A list of cells.
 #' @return A list
+#' @importFrom purrr map
 #' @examples
 #' notebook <- readRDS("data/notebooks/notebook01.rds")
 #' cell_to_ipynb(notebook$content$files)

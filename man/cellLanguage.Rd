@@ -4,10 +4,12 @@
 \alias{cellLanguage}
 \title{Checks the language of a cell. (First cell supplied)}
 \usage{
-cellLanguage(cell)
+cellLanguage(cell, kernel = TRUE)
 }
 \arguments{
 \item{cell}{A single notebook cell}
+
+\item{kernel}{if FALSE just the language name is returned}
 }
 \value{
 list containing either python or R kernel nad language info

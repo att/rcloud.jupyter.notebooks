@@ -1,17 +1,14 @@
 Package: rcloud.jupyter.notebooks
 Title: Jupyter notebook support for RCloud
-Version: 0.0.0.6
+Version: 0.0.1
 Authors@R: person("Beth", "Ashlee", email = "bashlee@mango-solutions.com", role = c("aut", "cre"))
-Description: rcloud.jupyter.notebooks allows RCloud import and export of Jupyter
-    notebooks.
-Depends: 
-    R (>= 3.3.3),
-    jsonlite
+Description: Import and Export Jupyter notebooks to/from RCloud.
 License: What license is it under?
 RCloud-Extension: gui
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 5.0.1
+Imports: jsonlite,
+         map
 Suggests: 
-    jsonlite,
     rcloud.support 
