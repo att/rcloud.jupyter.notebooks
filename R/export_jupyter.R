@@ -55,17 +55,26 @@ exportIpynb <- function(id ,version, file = NULL){
 #' @examples
 #' notebook <- readRDS("data/notebooks/notebook01.rds")
 #' cell_To_IPYNB(notebook$content$files)
+#' @export
 
 cell_To_IPYNB <- function(cells){
 
   # Use language of first cell
   # Jupyter notebooks currently do not support multple languages
   # Create a warning if more than one language is used
-  metaData <- cellLanguage(cells[[1]])
-  cellLanguages <- purrr::map(cells, cellLanguage, kernel = FALSE)
 
-  # if(length(unique(cellLanguages)) > 1) stop(
-  #   paste("Jupyter notebooks do not currently suport multiple languages, converting all cells to "), cellLanguages[[1]])
+  cellLang <- purrr::map(cells, cellLanguage, kernel = FALSE)
+
+  # If notebook contains a python cell - Jupyter notebook kernel is Python.
+  metaData <- if("Python"%in% cellLang){
+    list(language_info = language_info_py,
+         kernelspec = kernelspec_py)
+    } else{
+    cellLanguage(cells[[1]])
+  }
+
+  # if(length(unique(cellLang)) > 1) stop(
+  #   paste("Jupyter notebooks do not currently suport multiple languages, converting all cells to "), cellLang[[1]])
 
   # Create JSON Shell
   JSON <- list(cells = list(),
@@ -79,7 +88,7 @@ cell_To_IPYNB <- function(cells){
     JSON$cells[[i]] <- list(cell_type = cellType(cells[[i]]),
                             execution_count = i,                                 # Cell number
                             metadata = structure(list(), .Names = character(0)), # Named list
-                            outputs = list(),                                    # Ignore output (TO DO: markdown)
+                            outputs = list(),                                    # Ignore output
                             source = list(cells[[i]]$content))                   # Pull content of each cell
 
     # Markdown cells do not require an output or execution count
@@ -87,6 +96,15 @@ cell_To_IPYNB <- function(cells){
       JSON$cells[[i]]$outputs <- NULL
       JSON$cells[[i]]$execution_count <- NULL
     }
+
+    ## Function to append magics to content if R code in python kernel
+
+    JSON$cells[[i]]$source <- magicsContent(cellLanguage = cellLang[[i]],
+                                            kernel = metaData$kernelspec$language,
+                                            content = JSON$cells[[i]]$source
+                                            )
+
+
   }
   return(JSON)
 
@@ -99,6 +117,7 @@ cell_To_IPYNB <- function(cells){
 #' @examples
 #' notebook <- readRDS("data/notebooks/notebook01.rds")
 #' cellType(notebook$content$files$part1.R)
+#' @export
 cellType <- function(cell){
   if(grepl("^part.*\\.md$", cell$filename)){
     return("markdown")
@@ -117,12 +136,15 @@ cellType <- function(cell){
 #' @examples
 #' notebook <- readRDS("data/notebooks/notebook01.rds")
 #' cellLanguage(notebook$content$files$part1.R)
+#' @export
 cellLanguage <- function(cell, kernel = TRUE){
 
   lang <-  if (grepl("^part.*\\.R$", cell$filename)) {
     "R"
   } else if(grepl("^part.*\\.py$", cell$filename)){
     "Python"
+  } else {
+    "Markdown"
   }
 
   if(!kernel){
