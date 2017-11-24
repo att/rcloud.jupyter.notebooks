@@ -12,6 +12,6 @@ Imports:
     jsonlite,
     purrr
 Suggests:
-    rcloud.supports,
+    rcloud.support,
     testthat,
     covr
