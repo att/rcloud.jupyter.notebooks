@@ -3,7 +3,7 @@
 language: R
 sudo: false
 cache: packages
-r_github_packages: https://github.com/att/rcloud/tree/develop/rcloud.support
+r_github_packages: att/rcloud/rcloud.support
 
 after_success:
     -R -e 'covr::codecov()'
