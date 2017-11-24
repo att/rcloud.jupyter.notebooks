@@ -58,6 +58,7 @@ exportIpynb <- function(id ,version, file = NULL){
 #' notebook <- readRDS("data/notebooks/notebook01.rds")
 #' cell_to_ipynb(notebook$content$files)
 
+
 cell_to_ipynb <- function(cells){
 
   # Use language of first cell

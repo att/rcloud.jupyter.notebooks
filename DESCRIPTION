@@ -8,7 +8,10 @@ RCloud-Extension: gui
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 5.0.1
-Imports: jsonlite,
-         map
-Suggests: 
-    rcloud.support 
+Imports: 
+    jsonlite,
+    purrr
+Suggests:
+    rcloud.supports,
+    testthat,
+    covr
