@@ -12,7 +12,7 @@ ipyToJson <- function(json, filename){
 
   for(i in seq_along(json$cells)){
 
-    extn <- noteBookType(cell = json$cells[[i]], language = json$metadata$language_info$name)
+    extn <- noteBookType(cell = json$cells[[i]], language = json$metadata$language_info$file_extension)
 
     notebook$files[[paste0("part", i,  extn)]] <- list(content = json$cells[[i]]$source[[1]])
   }
@@ -49,8 +49,9 @@ noteBookType <- function(cell, language){
 
   if(cell$cell_type == "code"){
 
-    return(paste0(".", language))
+    #return(paste0(".", language))
 
+  return(language)
   } else if(cell$cell_type == "markdown"){
 
     return(".md")
