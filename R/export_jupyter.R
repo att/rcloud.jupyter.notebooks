@@ -99,7 +99,7 @@ cell_to_ipynb <- function(cells){
 cellType <- function(cell){
   if(grepl("^part.*\\.md$", cell$filename)){
     return("markdown")
-  }else if(grepl("^part.*\\.rmd$", cell$filename)){
+  }else if(grepl("^part.*\\.Rmd$", cell$filename)){
     return("markdown")
   } else{
     return("code")
