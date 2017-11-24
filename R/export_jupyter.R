@@ -54,10 +54,6 @@ exportIpynb <- function(id ,version, file = NULL){
 #' @param cells A list of cells.
 #' @return A list
 #' @importFrom purrr map
-#' @examples
-#' notebook <- readRDS("data/notebooks/notebook01.rds")
-#' cell_to_ipynb(notebook$content$files)
-
 
 cell_to_ipynb <- function(cells){
 
@@ -99,9 +95,7 @@ cell_to_ipynb <- function(cells){
 #'
 #' @param cell A single notebook cell
 #' @return cell type
-#' @examples
-#' notebook <- readRDS("data/notebooks/notebook01.rds")
-#' cellType(notebook$content$files$part1.R)
+
 cellType <- function(cell){
   if(grepl("^part.*\\.md$", cell$filename)){
     return("markdown")
@@ -117,9 +111,7 @@ cellType <- function(cell){
 #' @param cell A single notebook cell
 #' @param kernel if FALSE just the language name is returned
 #' @return list containing either python or R kernel nad language info
-#' @examples
-#' notebook <- readRDS("data/notebooks/notebook01.rds")
-#' cellLanguage(notebook$content$files$part1.R)
+
 cellLanguage <- function(cell, kernel = TRUE){
 
   lang <-  if (grepl("^part.*\\.R$", cell$filename)) {

@@ -23,5 +23,5 @@ language_info_py <- list(
   name = "python",
   nbconvert_exporter = "python",
   pygments_lexer = "ipython3",
-  version = "3.6.1")   # versioning - Rcloud dependant or user installed dep??
+  version = "3.6.1")   ## TODO: determine Python version from user installation
 
