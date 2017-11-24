@@ -3,7 +3,9 @@
 language: R
 sudo: false
 cache: packages
-r_github_packages: att/rcloud/rcloud.support
-
+_R_CHECK_FORCE_SUGGESTS_: false
+#r_github_packages: att/rcloud/rcloud.support
 after_success:
     -R -e 'covr::codecov()'
+
+
