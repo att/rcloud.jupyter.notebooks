@@ -15,8 +15,3 @@ cell type
 \description{
 Check if cell is code or markdown
 }
-\examples{
-notebook <- readRDS("data/notebooks/notebook01.rds")
-cellType(notebook$content$files$part1.R)
-}
-
