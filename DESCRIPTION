@@ -3,12 +3,12 @@ Title: Jupyter notebook support for RCloud
 Version: 0.0.1
 Authors@R: person("Beth", "Ashlee", email = "bashlee@mango-solutions.com", role = c("aut", "cre"))
 Description: Import and Export Jupyter notebooks to/from RCloud.
-License: What license is it under?
+License: MIT + file LICENSE
 RCloud-Extension: gui
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 5.0.1
-Imports: 
+Imports:
     jsonlite,
     purrr
 Suggests:
