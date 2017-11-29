@@ -15,8 +15,4 @@ A list
 \description{
 Converts notebook cells to JSON cells
 }
-\examples{
-notebook <- readRDS("data/notebooks/notebook01.rds")
-cell_to_ipynb(notebook$content$files)
-}
 

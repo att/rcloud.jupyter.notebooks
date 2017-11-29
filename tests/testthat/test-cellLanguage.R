@@ -3,7 +3,7 @@ context("cellLanguage")
 test_that("cell language of a notebook can be detected",{
 
   file <- "python_Notebook.rds"
-  file_path <- system.file(paste0("data/", file), package = "rcloud.jupyter.notebooks")
+  file_path <- file.path(paste0("data/", file))
 
   notebook <- readRDS(file_path)
   language <- cellLanguage(notebook$content$files$part1.py, kernel = FALSE)
@@ -16,7 +16,7 @@ test_that("cell language of a notebook can be detected",{
 test_that("notebok cell type", {
 
   file <- "notebook01.rds"
-  file_path <- system.file(paste0("data/", file), package = "rcloud.jupyter.notebooks")
+  file_path <- file.path(paste0("data/", file))
 
   notebook <- readRDS(file_path)
   type <-       cellType(notebook$content$files$part1.R)

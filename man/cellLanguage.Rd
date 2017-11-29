@@ -17,8 +17,4 @@ list containing either python or R kernel nad language info
 \description{
 Checks the language of a cell. (First cell supplied)
 }
-\examples{
-notebook <- readRDS("data/notebooks/notebook01.rds")
-cellLanguage(notebook$content$files$part1.R)
-}
 

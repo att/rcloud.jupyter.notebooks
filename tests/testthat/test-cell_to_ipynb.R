@@ -4,7 +4,7 @@ context("cell_to_ipynb")
 test_that("notebook list is converted to json list", {
 
   file <- "notebook01.rds"
-  file_path <- system.file(paste0("data/", file), package = "rcloud.jupyter.notebooks")
+  file_path <- file.path(paste0("data/", file))
 
   notebook <- readRDS(file_path)
   json <- cell_to_ipynb(notebook$content$files)
