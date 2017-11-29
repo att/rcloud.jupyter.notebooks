@@ -1,9 +1,9 @@
 # R ----------------
-kernelspec_R <- list(display_name = "R",
+kernelspecR <- list(display_name = "R",
                      language = "R",
                      name = "ir")
 
-language_info_R <- list(
+languageInfoR <- list(
   codemirror_mode = "r",
   file_extension = ".r",
   mimetype = "text/x-r-source",
@@ -12,11 +12,11 @@ language_info_R <- list(
   version = paste(version$major, version$minor, sep = "."))
 
 # Python ------------
-kernelspec_py <- list(display_name = "Python 3",
+kernelspecPy <- list(display_name = "Python 3",
                       language = "python",
                       name = "python3")
 
-language_info_py <- list(
+languageInfoPy <- list(
   codemirror_mode = list(name = "ipython", version = 3),
   file_extension = ".py",
   mimetype = "text/x-python",

@@ -35,7 +35,7 @@ exportIpynb <- function(id ,version, file = NULL){
   }
 
   # Write list to file
-  jsonlite::write_json(x = cell_to_ipynb(cells), path = tmp, auto_unbox = TRUE)
+  jsonlite::write_json(x = cellToIpynb(cells), path = tmp, auto_unbox = TRUE)
 
   if (is.null(file)) {
     list(
@@ -55,7 +55,7 @@ exportIpynb <- function(id ,version, file = NULL){
 #' @return A list
 #' @importFrom purrr map
 
-cell_to_ipynb <- function(cells){
+cellToIpynb <- function(cells){
 
   # Use language of first cell
   # Jupyter notebooks currently do not support multple languages
@@ -125,11 +125,11 @@ cellLanguage <- function(cell, kernel = TRUE){
   }
 
   if(lang == "R"){
-    return(list(language_info = language_info_R,
-                kernelspec = kernelspec_R))
+    return(list(language_info = languageInfoR,
+                kernelspec = kernelspecR))
   }else {
-    return(list(language_info = language_info_py,
-                kernelspec = kernelspec_py))
+    return(list(language_info = languageInfoPy,
+                kernelspec = kernelspecPy))
   }
 }
 

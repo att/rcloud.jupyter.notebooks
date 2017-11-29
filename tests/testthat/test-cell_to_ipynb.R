@@ -1,4 +1,4 @@
-context("cell_to_ipynb")
+context("cellToIpynb")
 
 
 test_that("notebook list is converted to json list", {
@@ -7,7 +7,7 @@ test_that("notebook list is converted to json list", {
   file_path <- file.path(paste0("data/", file))
 
   notebook <- readRDS(file_path)
-  json <- cell_to_ipynb(notebook$content$files)
+  json <- cellToIpynb(notebook$content$files)
 
   expect_equal(length(json), 4)
   expect_equal(class(json), "list")
