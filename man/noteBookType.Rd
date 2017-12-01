@@ -17,3 +17,4 @@ character string
 \description{
 Checks cell type
 }
+

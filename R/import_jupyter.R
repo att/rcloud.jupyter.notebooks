@@ -3,7 +3,6 @@
 #' @param json Json list
 #' @param filename filename
 #' @return list
-#' @export
 ipyToJson <- function(json, filename){
 
   notebookName <- tools::file_path_sans_ext(basename(filename))
