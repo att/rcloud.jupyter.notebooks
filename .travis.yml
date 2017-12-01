@@ -5,7 +5,8 @@ sudo: false
 cache: packages
 warnings_are_errors: false
 after_success:
-    -R -e 'covr::codecov()'
+    -R -e 'covr::codecov(type = "all")'
+    -R -e 'covr::coveralls()'
 
 
 

@@ -15,4 +15,3 @@ A list
 \description{
 Converts notebook cells to JSON cells
 }
-

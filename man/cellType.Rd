@@ -15,4 +15,3 @@ cell type
 \description{
 Check if cell is code or markdown
 }
-
