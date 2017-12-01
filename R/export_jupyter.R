@@ -5,7 +5,6 @@
 #' @param file Optional file path to write to
 #' @return A list
 #' @importFrom jsonlite write_json
-#' @export
 
 exportIpynb <- function(id ,version, file = NULL){
 
@@ -53,7 +52,6 @@ exportIpynb <- function(id ,version, file = NULL){
 #'
 #' @param cells A list of cells.
 #' @return A list
-#' @importFrom purrr map
 
 cellToIpynb <- function(cells){
 
@@ -61,8 +59,10 @@ cellToIpynb <- function(cells){
   # Jupyter notebooks currently do not support multple languages
   # Create a warning if more than one language is used
   metaData <- cellLanguage(cells[[1]])
-  cellLanguages <- purrr::map(cells, cellLanguage, kernel = FALSE)
 
+  # Mutli_language notebook export not accounted for in this release.
+  #
+  # cellLanguages <- lapply(cells, cellLanguage, kernel = FALSE)
   # if(length(unique(cellLanguages)) > 1) stop(
   #   paste("Jupyter notebooks do not currently suport multiple languages, converting all cells to "), cellLanguages[[1]])
 
@@ -118,6 +118,13 @@ cellLanguage <- function(cell, kernel = TRUE){
     "R"
   } else if(grepl("^part.*\\.py$", cell$filename)){
     "Python"
+  } else if(grepl("^part.*\\.md$", cell$filename)){
+    "Python" # TO DO : If first cell is markdown, should check every subsequent cell until either
+             #         R or python cell is reached. If entire notebook is .md then default to a
+             #         Python kernel.
+  } else{
+    ## bash shell output
+    "Cell Language unknown"
   }
 
   if(!kernel){
