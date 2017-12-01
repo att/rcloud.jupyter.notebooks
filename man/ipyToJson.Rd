@@ -17,4 +17,3 @@ list
 \description{
 Maps Ipynotebook to gist list
 }
-

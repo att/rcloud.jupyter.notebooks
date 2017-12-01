@@ -1,5 +1,5 @@
 # rcloud.jupyter.notebooks
-https://travis-ci.org/MangoTheCat/rcloud.jupyter.notebooks.svg?branch=master 
+[![Build Status](https://travis-ci.org/MangoTheCat/rcloud.jupyter.notebooks.svg?branch=master)](https://travis-ci.org/MangoTheCat/rcloud.jupyter.notebooks)
 
 RCloud is an environment for collaboratively creating and sharing data analysis scripts. RCloud lets you mix analysis code in R, HTML5, Markdown, Python, and others.
 
