@@ -12,6 +12,7 @@ RoxygenNote: 6.0.1
 Imports:
     rcloud.support,
     jsonlite
+Remotes: MangoTheCat/rcloud.support
 Suggests:
     testthat,
     covr
