@@ -2,18 +2,16 @@
 % Please edit documentation in R/export_jupyter.R
 \name{cellLanguage}
 \alias{cellLanguage}
-\title{Checks the language of a cell. (First cell supplied)}
+\title{Checks the language of a cell.}
 \usage{
-cellLanguage(cell, kernel = TRUE)
+cellLanguage(cell)
 }
 \arguments{
 \item{cell}{A single notebook cell}
-
-\item{kernel}{if FALSE just the language name is returned}
 }
 \value{
-list containing either python or R kernel nad language info
+Language of given cell (string)
 }
 \description{
-Checks the language of a cell. (First cell supplied)
+Checks the language of a cell.
 }

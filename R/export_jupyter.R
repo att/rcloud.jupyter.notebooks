@@ -55,16 +55,23 @@ exportIpynb <- function(id ,version, file = NULL){
 
 cellToIpynb <- function(cells){
 
-  # Use language of first cell
-  # Jupyter notebooks currently do not support multple languages
-  # Create a warning if more than one language is used
-  metaData <- cellLanguage(cells[[1]])
+  # Check language of all cells
+  cellLanguages <- lapply(cells, cellLanguage)
 
-  # Mutli_language notebook export not accounted for in this release.
-  #
-  # cellLanguages <- lapply(cells, cellLanguage, kernel = FALSE)
-  # if(length(unique(cellLanguages)) > 1) stop(
-  #   paste("Jupyter notebooks do not currently suport multiple languages, converting all cells to "), cellLanguages[[1]])
+  # If 1st is markdown, set kernel to next language used
+  if(cellLanguages[[1]] == "Markdown" && length(unique(cellLanguages)) > 1){
+    kernel <- unique(cellLanguages)[[2]]
+
+  # If all cells are markdown set kernel to Python
+  } else if(cellLanguages[[1]] == "Markdown" && length(unique(cellLanguages)) == 1){
+    kernel <- "Python"
+
+  } else {
+  # Else set kernel to language of 1st cell
+    kernel <- cellLanguages[[1]]
+  }
+
+  metaData <- getKernel(lang = kernel)
 
   # Create json Shell
   json <- list(cells = list(),
@@ -106,37 +113,41 @@ cellType <- function(cell){
   }
 }
 
-#' Checks the language of a cell. (First cell supplied)
+#' Checks the language of a cell.
 #'
 #' @param cell A single notebook cell
-#' @param kernel if FALSE just the language name is returned
-#' @return list containing either python or R kernel nad language info
+#' @return Language of given cell (string)
 
-cellLanguage <- function(cell, kernel = TRUE){
+cellLanguage <- function(cell){
 
   lang <-  if (grepl("^part.*\\.R$", cell$filename)) {
     "R"
   } else if(grepl("^part.*\\.py$", cell$filename)){
     "Python"
   } else if(grepl("^part.*\\.md$", cell$filename)){
-    "Python" # TO DO : If first cell is markdown, should check every subsequent cell until either
-             #         R or python cell is reached. If entire notebook is .md then default to a
-             #         Python kernel.
+    "Markdown"
   } else{
-    ## bash shell output
+    ## bash shell output insert here
     "Cell Language unknown"
   }
 
-  if(!kernel){
-    return(lang)
-  }
+  lang
 
+}
+
+#' Return list in the format used for Jupyter kernel
+#'
+#' @param lang either 'R' or 'Python'
+#' @return list containing either python or R kernel nad language info
+getKernel <- function(lang = c("R", "Python")){
   if(lang == "R"){
     return(list(language_info = languageInfoR,
                 kernelspec = kernelspecR))
-  }else {
+  }else if(lang == "Python") {
     return(list(language_info = languageInfoPy,
                 kernelspec = kernelspecPy))
+  } else{
+    return(NULL)
   }
 }
 
