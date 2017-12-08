@@ -58,17 +58,14 @@ cellToIpynb <- function(cells){
   # Check language of all cells
   cellLanguages <- lapply(cells, cellLanguage)
 
-  # If 1st is markdown, set kernel to next language used
-  if(cellLanguages[[1]] == "Markdown" && length(unique(cellLanguages)) > 1){
-    kernel <- unique(cellLanguages)[[2]]
-
-  # If all cells are markdown set kernel to Python
-  } else if(cellLanguages[[1]] == "Markdown" && length(unique(cellLanguages)) == 1){
-    kernel <- "Python"
-
-  } else {
-  # Else set kernel to language of 1st cell
-    kernel <- cellLanguages[[1]]
+  #If any cells are Python, kernel is Python
+  kernel <- if(length(grep("Python", unique(cellLanguages))) > 0){
+    "Python"
+  }else if(length(grep("R", unique(cellLanguages))) > 0){
+    "R"
+    # Eg. markdown or bash cells - set kernel to python
+  } else{
+    "Python"
   }
 
   metaData <- getKernel(lang = kernel)
@@ -92,6 +89,11 @@ cellToIpynb <- function(cells){
     if(cellType(cells[[i]]) == "markdown"){
       json$cells[[i]]$outputs <- NULL
       json$cells[[i]]$execution_count <- NULL
+    }
+
+    #If RCloud cells are shell script paste each line of content with ! to run in Jupyter
+    if(cellLanguage(cells[[i]]) == "Shell"){
+      json$cells[[i]]$source <- shellContent(json$cells[[i]]$source[[1]])
     }
   }
   return(json)
@@ -126,8 +128,9 @@ cellLanguage <- function(cell){
     "Python"
   } else if(grepl("^part.*\\.md$", cell$filename)){
     "Markdown"
+  } else if(grepl("^part.*\\.sh$", cell$filename)){
+    "Shell"
   } else{
-    ## bash shell output insert here
     "Cell Language unknown"
   }
 
@@ -151,3 +154,15 @@ getKernel <- function(lang = c("R", "Python")){
   }
 }
 
+
+#' Converts as shell cell to jupyter executable format
+#'
+#' @param content either 'R' or 'Python'
+#' @return content
+shellContent <- function(content){
+  splitLine <- strsplit(content, split = "\n")[[1]]
+  pasteShell <- paste("!", splitLine)
+  bindContent <- paste(pasteShell, collapse = "\n")
+  return(bindContent)
+
+}
