@@ -13,7 +13,9 @@ ipyToJson <- function(json, filename){
 
     extn <- noteBookType(cell = json$cells[[i]], language = json$metadata$language_info$file_extension)
 
-    notebook$files[[paste0("part", i,  extn)]] <- list(content = json$cells[[i]]$source[[1]])
+    notebook$files[[paste0("part", i,  extn)]] <- list(content = paste(unlist(json$cells[[i]]$source), collapse = ""))
+
+
   }
 
   notebook
