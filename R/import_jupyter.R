@@ -49,10 +49,7 @@ importIpynb <- function(text, filename){
 noteBookType <- function(cell, language){
 
   if(cell$cell_type == "code"){
-
-    #return(paste0(".", language))
-
-  return(language)
+    return(language)
   } else if(cell$cell_type == "markdown"){
 
     return(".md")
