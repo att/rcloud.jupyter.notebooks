@@ -4,7 +4,7 @@
 #' @param version notebook version
 #' @param file Optional file path to write to
 #' @return A list
-#' @export
+#' @importFrom jsonlite write_json
 
 exportIpynb <- function(id ,version, file = NULL){
 
@@ -34,7 +34,7 @@ exportIpynb <- function(id ,version, file = NULL){
   }
 
   # Write list to file
-  jsonlite::write_json(x = cell_To_IPYNB(cells), path = tmp, auto_unbox = TRUE)
+  jsonlite::write_json(x = cellToIpynb(cells), path = tmp, auto_unbox = TRUE)
 
   if (is.null(file)) {
     list(
@@ -52,61 +52,59 @@ exportIpynb <- function(id ,version, file = NULL){
 #'
 #' @param cells A list of cells.
 #' @return A list
-#' @examples
-#' notebook <- readRDS("data/notebooks/notebook01.rds")
-#' cell_To_IPYNB(notebook$content$files)
-#' @export
 
-cell_To_IPYNB <- function(cells){
+cellToIpynb <- function(cells){
 
-  # Use language of first cell
-  # Jupyter notebooks currently do not support multple languages
-  # Create a warning if more than one language is used
+  # Check language of all cells
+  cellLanguages <- lapply(cells, cellLanguage)
 
-  cellLang <- purrr::map(cells, cellLanguage, kernel = FALSE)
-
-  # If notebook contains a python cell - Jupyter notebook kernel is Python.
-  metaData <- if("Python"%in% cellLang){
-    list(language_info = language_info_py,
-         kernelspec = kernelspec_py)
-    } else{
-    cellLanguage(cells[[1]])
+  #If any cells are Python, kernel is Python
+  kernel <- if(length(grep("Python", unique(cellLanguages))) > 0){
+    "Python"
+  }else if(length(grep("R", unique(cellLanguages))) > 0){
+    "R"
+    # Eg. markdown or bash cells - set kernel to python
+  } else{
+    "Python"
   }
 
-  # if(length(unique(cellLang)) > 1) stop(
-  #   paste("Jupyter notebooks do not currently suport multiple languages, converting all cells to "), cellLang[[1]])
+  metaData <- getKernel(lang = kernel)
 
-  # Create JSON Shell
-  JSON <- list(cells = list(),
+  # Create json
+  json <- list(cells = list(),
                metadata = list(kernelspec = metaData$kernelspec,
                                language_info = metaData$language_info),
                nbformat = 4L,
                nbformat_minor = 2L)
 
+  # If mulitple language add cell to load the correct extentions
+  cells <- cellMagicExt(kernel, cellLanguages, cells)
+
   for(i in seq_along(cells)){
 
-    JSON$cells[[i]] <- list(cell_type = cellType(cells[[i]]),
-                            execution_count = i,                                 # Cell number
-                            metadata = structure(list(), .Names = character(0)), # Named list
-                            outputs = list(),                                    # Ignore output
-                            source = list(cells[[i]]$content))                   # Pull content of each cell
+    json$cells[[i ]] <- list(cell_type = cellType(cells[[i]]),
+                             execution_count = i,                                 # Cell number
+                             metadata = structure(list(), .Names = character(0)), # Named list
+                             outputs = list(),                                    # Ignore output
+                             source = list(cells[[i]]$content))                   # Pull content of each cell
 
     # Markdown cells do not require an output or execution count
     if(cellType(cells[[i]]) == "markdown"){
-      JSON$cells[[i]]$outputs <- NULL
-      JSON$cells[[i]]$execution_count <- NULL
+      json$cells[[i]]$outputs <- NULL
+      json$cells[[i]]$execution_count <- NULL
     }
 
-    ## Function to append magics to content if R code in python kernel
+    #If RCloud cells are shell script paste each line of content with ! to run in Jupyter
+    if(cellLanguage(cells[[i]]) == "Shell"){
+      json$cells[[i]]$source <- shellContent(json$cells[[i]]$source[[1]])
+    }
 
-    JSON$cells[[i]]$source <- magicsContent(cellLanguage = cellLang[[i]],
-                                            kernel = metaData$kernelspec$language,
-                                            content = JSON$cells[[i]]$source
-                                            )
-
-
+    #If multi-language - need to update content to include magics
+    if(kernel == "Python" && cellLanguage(cells[[i]]) == "R"){
+      json$cells[[i ]]$source <- paste("%%R\n", json$cells[[i]]$source[[1]], collapse = "")
+    }
   }
-  return(JSON)
+  return(json)
 
 }
 
@@ -114,49 +112,86 @@ cell_To_IPYNB <- function(cells){
 #'
 #' @param cell A single notebook cell
 #' @return cell type
-#' @examples
-#' notebook <- readRDS("data/notebooks/notebook01.rds")
-#' cellType(notebook$content$files$part1.R)
-#' @export
+
 cellType <- function(cell){
   if(grepl("^part.*\\.md$", cell$filename)){
     return("markdown")
-  }else if(grepl("^part.*\\.rmd$", cell$filename)){
+  }else if(grepl("^part.*\\.Rmd$", cell$filename)){
     return("markdown")
   } else{
     return("code")
   }
 }
 
-#' Checks the language of a cell. (First cell supplied)
+#' Checks the language of a cell.
 #'
 #' @param cell A single notebook cell
-#' @param kernel if FALSE just the language name is returned
-#' @return list containing either python or R kernel nad language info
-#' @examples
-#' notebook <- readRDS("data/notebooks/notebook01.rds")
-#' cellLanguage(notebook$content$files$part1.R)
-#' @export
-cellLanguage <- function(cell, kernel = TRUE){
+#' @return Language of given cell (string)
+
+cellLanguage <- function(cell){
 
   lang <-  if (grepl("^part.*\\.R$", cell$filename)) {
     "R"
   } else if(grepl("^part.*\\.py$", cell$filename)){
     "Python"
-  } else {
+  } else if(grepl("^part.*\\.md$", cell$filename)){
     "Markdown"
+  } else if(grepl("^part.*\\.sh$", cell$filename)){
+    "Shell"
+  } else{
+    "Cell Language unknown"
   }
 
-  if(!kernel){
-    return(lang)
-  }
+  lang
 
+}
+
+#' Return list in the format used for Jupyter kernel
+#'
+#' @param lang either 'R' or 'Python'
+#' @return list containing either python or R kernel nad language info
+getKernel <- function(lang = c("R", "Python")){
   if(lang == "R"){
-    return(list(language_info = language_info_R,
-                kernelspec = kernelspec_R))
-  }else {
-    return(list(language_info = language_info_py,
-                kernelspec = kernelspec_py))
+    return(list(language_info = languageInfoR,
+                kernelspec = kernelspecR))
+  }else if(lang == "Python") {
+    return(list(language_info = languageInfoPy,
+                kernelspec = kernelspecPy))
+  } else{
+    return(NULL)
   }
 }
 
+
+#' Converts as shell cell to jupyter executable format
+#' @description Running shell code in jupyter notebooks is currently only supported in a python kernel
+#'
+#' @param content shell cell content
+#' @return content
+shellContent <- function(content){
+  splitLine <- strsplit(content, split = "\n")[[1]]
+  pasteShell <- paste("!", splitLine)
+  bindContent <- paste(pasteShell, collapse = "\n")
+  return(bindContent)
+
+}
+
+#' Adds a cell to load extentions required to run R magic cells
+#' @description Currently only supports R cells in Python, this funtion will be lkely to expand to support new languages
+#'              Appends cell at top of notebook.
+#'
+#' @param kernel kernle
+#' @param cellLanguages
+#' @param cells list to append to
+#' @return content
+cellMagicExt <- function(kernel, cellLanguages, cells){
+
+  if(kernel == "Python" && "R" %in% cellLanguages){
+    ## Insert cell above R cell with R library magics
+    cells <- c(part0.py = list(list(filename = "part0.py",
+                                    language = "python",
+                                    content = "%load_ext rpy2.ipython")),
+               cells)
+  }
+  return(cells)
+}
