@@ -14,7 +14,7 @@ ipyToJson <- function(json, filename){
 
     extn <- noteBookType(cell = json$cells[[i]], language = json$metadata$language_info$name)
 
-    notebook$files[[paste0("part", i,  extn)]] <- list(content = json$cells[[i]]$source[[1]])
+    notebook$files[[paste0("part", i,  extn)]] <- list(content = paste(unlist(json$cells[[i]]$source), collapse = ""))
   }
 
   notebook
@@ -48,6 +48,7 @@ importIpynb <- function(text, filename){
 noteBookType <- function(cell, language){
 
   if(cell$cell_type == "code"){
+    if(language == "python") language <- "py"
 
     return(paste0(".", language))
 
