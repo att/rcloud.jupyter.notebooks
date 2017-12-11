@@ -17,13 +17,13 @@ caps <- NULL
   )
 
   ocaps <- list(
-    importIpynb = make_oc(importIpynb),
-    exportIpynb = make_oc(exportIpynb)
+    importIpynb = makeOc(importIpynb),
+    exportIpynb = makeOc(exportIpynb)
   )
 
   if (!is.null(caps)) caps$init(ocaps)
 }
 
-make_oc <- function(x) {
+makeOc <- function(x) {
   do.call(base::`:::`, list("rcloud.support", "make.oc"))(x)
 }

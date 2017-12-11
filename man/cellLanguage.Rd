@@ -2,7 +2,7 @@
 % Please edit documentation in R/export_jupyter.R
 \name{cellLanguage}
 \alias{cellLanguage}
-\title{Checks the language of a cell. (First cell supplied)}
+\title{Checks the language of a cell.}
 \usage{
 cellLanguage(cell)
 }
@@ -10,13 +10,8 @@ cellLanguage(cell)
 \item{cell}{A single notebook cell}
 }
 \value{
-list containing either python or R kernel nad language info
+Language of given cell (string)
 }
 \description{
-Checks the language of a cell. (First cell supplied)
+Checks the language of a cell.
 }
-\examples{
-notebook <- readRDS("data/notebooks/notebook01.rds")
-cellLanguage(notebook$content$files$part1.R)
-}
-

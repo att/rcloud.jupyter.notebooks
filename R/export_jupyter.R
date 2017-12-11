@@ -70,6 +70,7 @@ cellToIpynb <- function(cells){
 
   metaData <- getKernel(lang = kernel)
 
+
   # Create json
   json <- list(cells = list(),
                metadata = list(kernelspec = metaData$kernelspec,
@@ -82,11 +83,12 @@ cellToIpynb <- function(cells){
 
   for(i in seq_along(cells)){
 
-    json$cells[[i ]] <- list(cell_type = cellType(cells[[i]]),
+    json$cells[[i]] <- list(cell_type = cellType(cells[[i]]),
                              execution_count = i,                                 # Cell number
                              metadata = structure(list(), .Names = character(0)), # Named list
                              outputs = list(),                                    # Ignore output
                              source = list(cells[[i]]$content))                   # Pull content of each cell
+
 
     # Markdown cells do not require an output or execution count
     if(cellType(cells[[i]]) == "markdown"){
@@ -97,11 +99,13 @@ cellToIpynb <- function(cells){
     #If RCloud cells are shell script paste each line of content with ! to run in Jupyter
     if(cellLanguage(cells[[i]]) == "Shell"){
       json$cells[[i]]$source <- shellContent(json$cells[[i]]$source[[1]])
+
     }
 
     #If multi-language - need to update content to include magics
     if(kernel == "Python" && cellLanguage(cells[[i]]) == "R"){
       json$cells[[i ]]$source <- paste("%%R\n", json$cells[[i]]$source[[1]], collapse = "")
+
     }
   }
   return(json)
@@ -176,6 +180,7 @@ shellContent <- function(content){
 
 }
 
+
 #' Adds a cell to load extentions required to run R magic cells
 #' @description Currently only supports R cells in Python, this funtion will be lkely to expand to support new languages
 #'              Appends cell at top of notebook.
@@ -195,3 +200,4 @@ cellMagicExt <- function(kernel, cellLanguages, cells){
   }
   return(cells)
 }
+

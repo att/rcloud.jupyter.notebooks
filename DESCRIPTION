@@ -1,17 +1,18 @@
 Package: rcloud.jupyter.notebooks
 Title: Jupyter notebook support for RCloud
-Version: 0.0.1.3
+Version: 0.1.1
 Authors@R: person("Beth", "Ashlee", email = "bashlee@mango-solutions.com", role = c("aut", "cre"))
-Description: rcloud.jupyter.notebooks allows RCloud import and export of Jupyter
-    notebooks.
-Depends: 
-    R (>= 3.3.3),
-    jsonlite
-License: What license is it under?
+Description: Import and Export Jupyter notebooks to/from RCloud.
+Depends: R (>= 3.1.2)
+License: MIT + file LICENSE
 RCloud-Extension: gui
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 5.0.1
-Suggests: 
-    jsonlite,
-    rcloud.support 
+RoxygenNote: 6.0.1
+Imports:
+    rcloud.support,
+    jsonlite
+Remotes: MangoTheCat/rcloud.support
+Suggests:
+    testthat,
+    covr

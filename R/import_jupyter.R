@@ -3,7 +3,6 @@
 #' @param json Json list
 #' @param filename filename
 #' @return list
-#' @export
 ipyToJson <- function(json, filename){
 
   notebookName <- tools::file_path_sans_ext(basename(filename))
@@ -12,9 +11,10 @@ ipyToJson <- function(json, filename){
 
   for(i in seq_along(json$cells)){
 
-    extn <- noteBookType(cell = json$cells[[i]], language = json$metadata$language_info$name)
+    extn <- noteBookType(cell = json$cells[[i]], language = json$metadata$language_info$file_extension)
 
     notebook$files[[paste0("part", i,  extn)]] <- list(content = paste(unlist(json$cells[[i]]$source), collapse = ""))
+
   }
 
   notebook
@@ -48,10 +48,7 @@ importIpynb <- function(text, filename){
 noteBookType <- function(cell, language){
 
   if(cell$cell_type == "code"){
-    if(language == "python") language <- "py"
-
-    return(paste0(".", language))
-
+    return(language)
   } else if(cell$cell_type == "markdown"){
 
     return(".md")

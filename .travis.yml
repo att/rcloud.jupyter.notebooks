@@ -1,0 +1,12 @@
+# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
+
+language: R
+sudo: false
+cache: packages
+warnings_are_errors: false
+after_success:
+    -R -e 'covr::codecov(type = "all")'
+    -R -e 'covr::coveralls()'
+
+
+
