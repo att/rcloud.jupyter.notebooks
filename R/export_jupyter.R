@@ -156,8 +156,9 @@ getKernel <- function(lang = c("R", "Python")){
 
 
 #' Converts as shell cell to jupyter executable format
+#' @description Running shell code in jupyter notebooks is currently only supported in a python kernel
 #'
-#' @param content either 'R' or 'Python'
+#' @param content shell cell content
 #' @return content
 shellContent <- function(content){
   splitLine <- strsplit(content, split = "\n")[[1]]
