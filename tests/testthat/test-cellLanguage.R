@@ -1,6 +1,6 @@
 context("cellLanguage")
 
-test_that("cell language of a notebook can be detected and kernel returnedd",{
+test_that("cell language of a notebook can be detected and kernel returned",{
 
   file <- "python_Notebook.rds"
   file_path <- file.path(paste0("data/", file))

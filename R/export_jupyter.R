@@ -192,7 +192,7 @@ shellContent <- function(content){
 cellMagicExt <- function(kernel, cellLanguages, cells){
 
   if(kernel == "Python" && "R" %in% cellLanguages){
-    ## Insert cell above R cell with R library magics
+    ## Insert cell to load rpy2.ipython
     cells <- c(part0.py = list(list(filename = "part0.py",
                                     language = "python",
                                     content = "%load_ext rpy2.ipython")),
