@@ -1,7 +1,5 @@
 # rcloud.jupyter.notebooks
-[![Build Status](https://travis-ci.org/att/rcloud.jupyter.notebooks.svg?branch=master)](https://travis-ci.org/att/rcloud.jupyter.notebooks)
-
-[![Coverage Status](https://img.shields.io/codecov/c/github/att/rcloud.jupyter.notebooks/master.svg)](https://codecov.io/gh/att/rcloud.jupyter.notebooks?branch=master)
+[![Build Status](https://travis-ci.org/att/rcloud.jupyter.notebooks.svg?branch=master)](https://travis-ci.org/att/rcloud.jupyter.notebooks)[![Coverage Status](https://img.shields.io/codecov/c/github/att/rcloud.jupyter.notebooks/master.svg)](https://codecov.io/gh/att/rcloud.jupyter.notebooks?branch=master)
 
 RCloud is an environment for collaboratively creating and sharing data analysis scripts. RCloud lets you mix analysis code in R, HTML5, Markdown, Python, and others.
 

@@ -59,9 +59,9 @@ cellToIpynb <- function(cells){
   cellLanguages <- lapply(cells, cellLanguage)
 
   #If any cells are Python, kernel is Python
-  kernel <- if(length(grep("Python", unique(cellLanguages))) > 0){
+  kernel <- if(any(cellLanguages == "Python")){
     "Python"
-  }else if(length(grep("R", unique(cellLanguages))) > 0){
+  }else if(any(cellLanguages == "R")){
     "R"
     # Eg. markdown or bash cells - set kernel to python
   } else{
@@ -186,7 +186,7 @@ shellContent <- function(content){
 #'              Appends cell at top of notebook.
 #'
 #' @param kernel kernle
-#' @param cellLanguages
+#' @param cellLanguages all cell languages in notebook
 #' @param cells list to append to
 #' @return content
 cellMagicExt <- function(kernel, cellLanguages, cells){

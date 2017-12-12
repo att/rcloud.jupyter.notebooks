@@ -11,9 +11,10 @@ ipyToJson <- function(json, filename){
 
   for(i in seq_along(json$cells)){
 
-    extn <- noteBookType(cell = json$cells[[i]], language = json$metadata$language_info$file_extension)
+    cellContent <- cellImportCheck(json$cells[[i]],
+                                   language = json$metadata$language_info$file_extension)
 
-    notebook$files[[paste0("part", i,  extn)]] <- list(content = paste(unlist(json$cells[[i]]$source), collapse = ""))
+    notebook$files[[paste0("part", i,  cellContent$ext)]] <- list(content =  paste(unlist(cellContent$content), collapse = ""))
 
   }
 
@@ -58,5 +59,45 @@ noteBookType <- function(cell, language){
   }
 }
 
+cellImportCheck <- function(cell, language){
 
+  content <- cell$source
+
+  ext <- if(cell$cell_type == "code"){
+    language
+  } else if(cell$cell_type == "markdown"){
+    ".md"
+  } else{
+    stop("Cell type unknown")
+  }
+
+  ## Cell magics %%R %%! %%sh
+  ## Line magics %R !
+
+  if(length(grep("^%%R", content)) > 0){
+    content <- gsub("^%%R", replacement = "", x = content )
+    ext <- ".R"
+  }
+  if(length(grep("^%R", content)) > 0){
+    content <- gsub("^%R", replacement = "", x = content )
+    ext <- ".R"
+  }
+
+  if(length(grep("^!", content)) > 0 ){
+    content <- gsub("^!", replacement = "", x = content )
+    ext <- ".sh"
+  }
+  if(length(grep("^%%!", content)) > 0 ){
+    content <- gsub("^%%!", replacement = "", x = content )
+    ext <- ".sh"
+  }
+  if(length(grep("^%%sh", content)) > 0 ){
+    content <- gsub("^%%sh", replacement = "", x = content )
+    ext <- ".sh"
+  }
+
+  return(c(content = list(content), ext = ext))
+
+
+}
 
