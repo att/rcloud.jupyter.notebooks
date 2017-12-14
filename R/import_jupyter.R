@@ -12,7 +12,7 @@ ipyToJson <- function(json, filename){
   for(i in seq_along(json$cells)){
 
     cellContent <- cellImportCheck(json$cells[[i]],
-                                   language = json$metadata$language_info$file_extension)
+                                   fileEtx = json$metadata$language_info$file_extension)
 
     notebook$files[[paste0("part", i,  cellContent$ext)]] <- list(content =  paste(unlist(cellContent$content), collapse = ""))
 
@@ -43,28 +43,15 @@ importIpynb <- function(text, filename){
 #' Checks cell type
 #'
 #' @param cell Json cell
-#' @param language extracted from Json metadata
+#' @param fileEtx extracted from Json metadata
 #' @return character string
 
-noteBookType <- function(cell, language){
+cellImportCheck <- function(cell, fileEtx){
 
-  if(cell$cell_type == "code"){
-    return(language)
-  } else if(cell$cell_type == "markdown"){
-
-    return(".md")
-
-  }else{
-    stop("Cell type unknown")
-  }
-}
-
-cellImportCheck <- function(cell, language){
-
-  content <- cell$source
+  content <-  cell$source
 
   ext <- if(cell$cell_type == "code"){
-    language
+    fileEtx
   } else if(cell$cell_type == "markdown"){
     ".md"
   } else{
@@ -73,30 +60,20 @@ cellImportCheck <- function(cell, language){
 
   ## Cell magics %%R %%! %%sh
   ## Line magics %R !
+  lookUp <- data.frame(magic = c("%%R", "%R", "^!", "%%!", "%%sh"),
+                       extn = c(".R", ".R", ".sh", ".sh", ".sh"))
 
-  if(length(grep("^%%R", content)) > 0){
-    content <- gsub("^%%R", replacement = "", x = content )
-    ext <- ".R"
-  }
-  if(length(grep("^%R", content)) > 0){
-    content <- gsub("^%R", replacement = "", x = content )
-    ext <- ".R"
-  }
+  for(i in seq_along(lookUp$magic)){
+    theMagic <- paste0("^", lookUp$magic[i])
 
-  if(length(grep("^!", content)) > 0 ){
-    content <- gsub("^!", replacement = "", x = content )
-    ext <- ".sh"
-  }
-  if(length(grep("^%%!", content)) > 0 ){
-    content <- gsub("^%%!", replacement = "", x = content )
-    ext <- ".sh"
-  }
-  if(length(grep("^%%sh", content)) > 0 ){
-    content <- gsub("^%%sh", replacement = "", x = content )
-    ext <- ".sh"
-  }
+    if(length(grep(theMagic, content)) > 0){
 
-  return(c(content = list(content), ext = ext))
+      content <- gsub(theMagic, replacement = "", x = content )
+      ext <- lookUp$extn[i]
+    }
+
+  }
+  return(c(content = list(content), ext = as.character(ext)))
 
 
 }
