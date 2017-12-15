@@ -9,6 +9,8 @@ cellMagicExt(kernel, cellLanguages, cells)
 \arguments{
 \item{kernel}{kernle}
 
+\item{cellLanguages}{all cell languages in notebook}
+
 \item{cells}{list to append to}
 }
 \value{
