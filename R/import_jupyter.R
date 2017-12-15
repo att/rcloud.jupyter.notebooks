@@ -17,7 +17,7 @@ ipyToJson <- function(json, filename){
 
 
   # Check cell has content before creating
-  if(nchar(paste0(cellContent, collapse = "")) > 0){
+  if(nchar(paste0(cellContent$content, collapse = "")) > 0){
     notebook$files[[paste0("part", i,  cellContent$ext)]] <- list(content =  paste(unlist(cellContent$content), collapse = ""))
 
   }
@@ -73,13 +73,14 @@ cellImportCheck <- function(cell, fileEtx){
 
     if(length(grep(theMagic, content)) > 0){
 
-      content <- trimws(gsub(theMagic, replacement = "", x = content ))
+      content <- gsub(theMagic, replacement = "", x = content )
+      content[1] <- gsub("^\n", "",content[1]) # Clean up first line after removing the magic
       ext <- lookUp$extn[i]
       }
   }
 
   # Remove rpy2.ipython cell/line created by export
-  content <- trimws(gsub("%load_ext rpy2.ipython", "", content))
+  content <- gsub("%load_ext rpy2.ipython", "", content)
 
   return(c(content = list(content), ext = as.character(ext)))
 

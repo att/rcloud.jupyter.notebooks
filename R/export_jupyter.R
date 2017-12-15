@@ -104,7 +104,7 @@ cellToIpynb <- function(cells){
 
     #If multi-language - need to update content to include magics
     if(kernel == "Python" && cellLanguage(cells[[i]]) == "R"){
-      json$cells[[i ]]$source <- paste("%%R\n", json$cells[[i]]$source[[1]], collapse = "")
+      json$cells[[i ]]$source <- paste0("%%R\n", json$cells[[i]]$source[[1]], collapse = "")
 
     }
   }
@@ -174,7 +174,7 @@ getKernel <- function(lang = c("R", "Python")){
 #' @return content
 shellContent <- function(content){
   splitLine <- strsplit(content, split = "\n")[[1]]
-  pasteShell <- paste("!", splitLine)
+  pasteShell <- paste0("!", splitLine)
   bindContent <- paste(pasteShell, collapse = "\n")
   return(bindContent)
 
