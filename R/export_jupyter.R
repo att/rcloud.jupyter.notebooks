@@ -173,8 +173,10 @@ getKernel <- function(lang = c("R", "Python")){
 #' @param content shell cell content
 #' @return content
 shellContent <- function(content){
+
   splitLine <- strsplit(content, split = "\n")[[1]]
   pasteShell <- paste0("!", splitLine)
+  pasteShell[nchar(pasteShell) == 1] <- "" # Remove magic from blank lines
   bindContent <- paste(pasteShell, collapse = "\n")
   return(bindContent)
 
