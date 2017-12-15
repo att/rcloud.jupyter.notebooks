@@ -73,7 +73,7 @@ cellImportCheck <- function(cell, fileEtx){
 
     if(length(grep(theMagic, content)) > 0){
 
-      content <- gsub(theMagic, replacement = "", x = content )
+      content <- trimws(gsub(theMagic, replacement = "", x = content ))
       ext <- lookUp$extn[i]
       }
   }
