@@ -4,9 +4,9 @@ language: R
 sudo: false
 cache: packages
 warnings_are_errors: false
+r_github_packages:
+  - r-lib/covr
+
 after_success:
-    -R -e 'covr::codecov(type = "all")'
-    -R -e 'covr::coveralls()'
-
-
+  - Rscript -e 'covr::codecov()'
 

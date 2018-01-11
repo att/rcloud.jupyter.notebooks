@@ -11,11 +11,16 @@ ipyToJson <- function(json, filename){
 
   for(i in seq_along(json$cells)){
 
-    extn <- noteBookType(cell = json$cells[[i]], language = json$metadata$language_info$file_extension)
 
-    notebook$files[[paste0("part", i,  extn)]] <- list(content = paste(unlist(json$cells[[i]]$source), collapse = ""))
+    cellContent <- cellImportCheck(json$cells[[i]],
+                                   fileEtx = json$metadata$language_info$file_extension)
 
 
+  # Check cell has content before creating
+  if(nchar(paste0(cellContent$content, collapse = "")) > 0){
+    notebook$files[[paste0("part", i,  cellContent$ext)]] <- list(content =  paste(unlist(cellContent$content), collapse = ""))
+
+  }
   }
 
   notebook
@@ -43,24 +48,42 @@ importIpynb <- function(text, filename){
 #' Checks cell type
 #'
 #' @param cell Json cell
-#' @param language extracted from Json metadata
+#' @param fileEtx extracted from Json metadata
 #' @return character string
 
-noteBookType <- function(cell, language){
+cellImportCheck <- function(cell, fileEtx){
 
-  if(cell$cell_type == "code"){
+  content <-  cell$source
 
-    #return(paste0(".", language))
-
-  return(language)
+  ext <- if(cell$cell_type == "code"){
+    fileEtx
   } else if(cell$cell_type == "markdown"){
-
-    return(".md")
-
-  }else{
+    ".md"
+  } else{
     stop("Cell type unknown")
   }
+
+  ## Cell magics %%R %%! %%sh
+  ## Line magics %R !
+  lookUp <- data.frame(magic = c("%%R", "%R", "^!", "%%!", "%%sh"),
+                       extn = c(".R", ".R", ".sh", ".sh", ".sh"))
+
+  for(i in seq_along(lookUp$magic)){
+    theMagic <- paste0("^", lookUp$magic[i])
+
+    if(length(grep(theMagic, content)) > 0){
+
+      content <- gsub(theMagic, replacement = "", x = content )
+      content[1] <- gsub("^\n", "",content[1]) # Clean up first line after removing the magic
+      ext <- lookUp$extn[i]
+      }
+  }
+
+  # Remove rpy2.ipython cell/line created by export
+  content <- gsub("%load_ext rpy2.ipython", "", content)
+
+  return(c(content = list(content), ext = as.character(ext)))
+
+
 }
-
-
 

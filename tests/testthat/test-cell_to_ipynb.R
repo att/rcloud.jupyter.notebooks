@@ -16,3 +16,23 @@ test_that("notebook list is converted to json list", {
 
 })
 
+test_that("An R notebook list is converted to json list", {
+
+  file <- "notebookR.rds"
+  fileSh <- "notebookSh.rds"
+  file_path <- file.path(paste0("data/", file))
+  file_path_sh <- file.path(paste0("data/", fileSh))
+
+  notebook <- readRDS(file_path)
+  notebookSh <- readRDS(file_path_sh)
+  json <- cellToIpynb(notebook$content$files)
+  jsonSh <- cellToIpynb(notebookSh$content$files)
+
+  expect_equal(names(json), c("cells", "metadata", "nbformat", "nbformat_minor"))
+  expect_equal(names(jsonSh), c("cells", "metadata", "nbformat", "nbformat_minor"))
+
+
+})
+
+
+

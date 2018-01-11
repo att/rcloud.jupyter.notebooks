@@ -58,40 +58,54 @@ cellToIpynb <- function(cells){
   # Check language of all cells
   cellLanguages <- lapply(cells, cellLanguage)
 
-  # If 1st is markdown, set kernel to next language used
-  if(cellLanguages[[1]] == "Markdown" && length(unique(cellLanguages)) > 1){
-    kernel <- unique(cellLanguages)[[2]]
-
-  # If all cells are markdown set kernel to Python
-  } else if(cellLanguages[[1]] == "Markdown" && length(unique(cellLanguages)) == 1){
-    kernel <- "Python"
-
-  } else {
-  # Else set kernel to language of 1st cell
-    kernel <- cellLanguages[[1]]
+  #If any cells are Python, kernel is Python
+  kernel <- if(any(cellLanguages == "Python")){
+    "Python"
+  }else if(any(cellLanguages == "R")){
+    "R"
+    # Eg. markdown or bash cells - set kernel to python
+  } else{
+    "Python"
   }
 
   metaData <- getKernel(lang = kernel)
 
-  # Create json Shell
+
+  # Create json
   json <- list(cells = list(),
                metadata = list(kernelspec = metaData$kernelspec,
                                language_info = metaData$language_info),
                nbformat = 4L,
                nbformat_minor = 2L)
 
+  # If mulitple language add cell to load the correct extentions
+  cells <- cellMagicExt(kernel, cellLanguages, cells)
+
   for(i in seq_along(cells)){
 
     json$cells[[i]] <- list(cell_type = cellType(cells[[i]]),
-                            execution_count = i,                                 # Cell number
-                            metadata = structure(list(), .Names = character(0)), # Named list
-                            outputs = list(),                                    # Ignore output (TO DO: markdown)
-                            source = list(cells[[i]]$content))                   # Pull content of each cell
+                             execution_count = i,                                 # Cell number
+                             metadata = structure(list(), .Names = character(0)), # Named list
+                             outputs = list(),                                    # Ignore output
+                             source = list(cells[[i]]$content))                   # Pull content of each cell
+
 
     # Markdown cells do not require an output or execution count
     if(cellType(cells[[i]]) == "markdown"){
       json$cells[[i]]$outputs <- NULL
       json$cells[[i]]$execution_count <- NULL
+    }
+
+    #If RCloud cells are shell script paste each line of content with ! to run in Jupyter
+    if(cellLanguage(cells[[i]]) == "Shell"){
+      json$cells[[i]]$source <- shellContent(json$cells[[i]]$source[[1]])
+
+    }
+
+    #If multi-language - need to update content to include magics
+    if(kernel == "Python" && cellLanguage(cells[[i]]) == "R"){
+      json$cells[[i ]]$source <- paste0("%%R\n", json$cells[[i]]$source[[1]], collapse = "")
+
     }
   }
   return(json)
@@ -126,8 +140,9 @@ cellLanguage <- function(cell){
     "Python"
   } else if(grepl("^part.*\\.md$", cell$filename)){
     "Markdown"
+  } else if(grepl("^part.*\\.sh$", cell$filename)){
+    "Shell"
   } else{
-    ## bash shell output insert here
     "Cell Language unknown"
   }
 
@@ -149,5 +164,42 @@ getKernel <- function(lang = c("R", "Python")){
   } else{
     return(NULL)
   }
+}
+
+
+#' Converts as shell cell to jupyter executable format
+#' @description Running shell code in jupyter notebooks is currently only supported in a python kernel
+#'
+#' @param content shell cell content
+#' @return content
+shellContent <- function(content){
+
+  splitLine <- strsplit(content, split = "\n")[[1]]
+  pasteShell <- paste0("!", splitLine)
+  pasteShell[nchar(pasteShell) == 1] <- "" # Remove magic from blank lines
+  bindContent <- paste(pasteShell, collapse = "\n")
+  return(bindContent)
+
+}
+
+
+#' Adds a cell to load extentions required to run R magic cells
+#' @description Currently only supports R cells in Python, this funtion will be lkely to expand to support new languages
+#'              Appends cell at top of notebook.
+#'
+#' @param kernel kernle
+#' @param cellLanguages all cell languages in notebook
+#' @param cells list to append to
+#' @return content
+cellMagicExt <- function(kernel, cellLanguages, cells){
+
+  if(kernel == "Python" && "R" %in% cellLanguages){
+    ## Insert cell to load rpy2.ipython
+    cells <- c(part0.py = list(list(filename = "part0.py",
+                                    language = "python",
+                                    content = "%load_ext rpy2.ipython")),
+               cells)
+  }
+  return(cells)
 }
 
